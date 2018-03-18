@@ -1,0 +1,14 @@
+{
+  "stocks": [
+    "sh600000", "sz000001"
+  ],
+  "time": {
+    "start": "09:30",
+    "end": "15:00"
+  },
+  "notification": {
+    "url": "https://hook.bearychat.com/=bwCEN/incoming/88b7af379613e62f292f487e4c08d42e",
+    "channel": "stock"
+  },
+  "interval": 30
+}
