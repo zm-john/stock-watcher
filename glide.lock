@@ -1,0 +1,16 @@
+hash: 347657e85f9598fbe26a09cbe7c25d082176142ef975a8ddc9e75b4b28ed58a0
+updated: 2018-03-19T20:42:22.417500858+08:00
+imports:
+- name: github.com/uniplaces/carbon
+  version: 2ed00d8a452957d017135066f4e9bda33821d426
+  subpackages:
+  - lang
+- name: golang.org/x/text
+  version: 8c34f848e18c4bd34d02db7f19a0ed1a0a8f5852
+  subpackages:
+  - encoding
+  - encoding/internal
+  - encoding/internal/identifier
+  - encoding/simplifiedchinese
+  - transform
+testImports: []

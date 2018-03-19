@@ -1,0 +1,6 @@
+package: stock-watcher
+import:
+- package: github.com/uniplaces/carbon
+  version: ~0.1.0
+- package: golang.org/x/text/encoding/simplifiedchinese
+- package: golang.org/x/text/transform
