@@ -13,28 +13,46 @@
 ```
 {
   "stocks": [
-    "sh600000", "sz000001" // 指定股票代码，前缀 sh 表示上交所股票, 前缀 sz 表示深交所股票， 股票代码以 6 开头的上交所股票, 0、3 开头的为深交所股票
+    "sh600000", "sz000001"
   ],
   "time": {
-    "start": "09:30", // 开盘时间
-    "end": "15:00"    // 收盘时间
+    "start": "09:30",
+    "end": "15:00"
   },
   "notification": {
-    "url": "https://hook.bearychat.com/=bwCEN/incoming/88b7af379613e62f292f487e4c08d42e", // 通知地址，我使用的 bearychat，
-    // 会向这个地址 Post content-type:application/json 数据{"text": "股票数据", "channel": "指定股票接收频道"}
+    "url": "https://hook.bearychat.com/=bwCEN/incoming/88b7af379613e62f292f487e4c08d42e",
     "channel": "stock"
   },
-  "interval": 30 // 间隔周期
+  "interval": 30
 }
+
+stocks：指定股票代码，前缀 sh 表示上交所股票, 前缀 sz 表示深交所股票， 股票代码以 6 开头的上交所股票, 0、3 开头的为深交所股票
+
+time：交易时间
+|---- start 开盘时间
+|____ end 收盘时间
+
+notification：通知
+|---- url 通知地址，我使用的 bearychat 会向这个地址 Post content-type:application/json 数据{"text": "股票数据", "channel": "指定股票接收频道"}
+|____ channel 频道
+
+interval：通知间隔时间，单位秒
+
 ```
 
 
 2. 运行
 ```
+1）克隆项目
 git clone git@github.com:zm-john/stock-watcher.git // 最好放到 ~/go/src 目录下面，不然需要手动设置 GOPATH 为当前目录
 
+2）进入项目目录
 cd stock-watcher
-./install.sh // 安装其他包，暂时没有使用包管理
+
+3）安装依赖包
+./install.sh or glide install
+
+4）运行
 go run main.go
 
 ```
