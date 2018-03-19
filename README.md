@@ -31,6 +31,10 @@
 
 2. 运行
 ```
+git clone git@github.com:zm-john/stock-watcher.git // 最好放到 ~/go/src 目录下面，不然需要手动设置 GOPATH 为当前目录
+
+cd stock-watcher
+./install.sh // 安装其他包，暂时没有使用包管理
 go run main.go
 
 ```
