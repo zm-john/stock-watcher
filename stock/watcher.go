@@ -81,7 +81,7 @@ func (w *Watcher) Watch() {
 		message := format(rest)
 		w.notify(message)
 
-		time.Sleep(30 * time.Second)
+		time.Sleep(w.config.Interval * time.Second)
 	}
 }
 
@@ -143,7 +143,6 @@ func (w *Watcher) notify(message string) {
 	if err != nil {
 		panic("josn encode error")
 	}
-	fmt.Println(string(buf))
 	http.Post(w.config.Notify.Url, "application/json", strings.NewReader(string(buf)))
 }
 

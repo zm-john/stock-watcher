@@ -1,5 +1,6 @@
 package stock
 
+import "time"
 
 type Time struct {
 	Start string
@@ -15,6 +16,6 @@ type Config struct{
 	Stocks []string `json:"stocks"`
 	Time Time `json:"time"`
 	Notify Notification `json:"notification"`
-	Interval int8 `json:"interval"`
+	Interval time.Duration `json:"interval"`
 	StockQueryHost string `json:"stock_host"`
 }
