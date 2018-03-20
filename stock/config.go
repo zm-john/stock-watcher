@@ -12,8 +12,16 @@ type Notification struct{
 	Channel string
 }
 
+type Stock struct {
+	Code string `json:"code"`
+	Highest float64 `json:"highest"`
+	Lowest float64 `json:"lowest"`
+	Alias string
+}
+
+
 type Config struct{
-	Stocks []string `json:"stocks"`
+	Stocks []Stock `json:"stocks"`
 	Time Time `json:"time"`
 	Notify Notification `json:"notification"`
 	Interval time.Duration `json:"interval"`

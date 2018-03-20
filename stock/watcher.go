@@ -6,12 +6,15 @@ import (
 	"golang.org/x/text/transform"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"regexp"
-	"fmt"
+	//"fmt"
 	"strings"
 	"github.com/uniplaces/carbon"
 	"time"
 	"strconv"
 	"encoding/json"
+	"sync"
+	"errors"
+	"fmt"
 )
 
 const HOST = "http://hq.sinajs.cn/"
@@ -66,24 +69,36 @@ func (w *Watcher) Config(conf Config) {
 }
 
 func (w *Watcher) Watch() {
+	var wg sync.WaitGroup
 	for {
 		if w.isTradeTime() == false {
 			continue
 		}
 
-		query := w.stocks()
-		rest, err := fetch(query)
-
-		if err != nil {
-			continue
+		for _, stock := range w.config.Stocks {
+			wg.Add(1)
+			go func(stock Stock) {
+				defer wg.Done()
+				rest, err := fetch(stock.Alias)
+				if err != nil {
+					w.notify(err.Error())
+				}
+				message := format(*w, rest)
+				if len(message) > 0 {
+					w.notify(message)
+				}
+			}(stock)
 		}
 
-		message := format(rest)
-		w.notify(message)
+
+		wg.Wait()
 
 		time.Sleep(w.config.Interval * time.Second)
 	}
 }
+
+
+
 
 func (w *Watcher) isTradeTime() bool {
 	if carbon.Now().IsWeekend() {
@@ -146,11 +161,8 @@ func (w *Watcher) notify(message string) {
 	http.Post(w.config.Notify.Url, "application/json", strings.NewReader(string(buf)))
 }
 
-func (w *Watcher) stocks() string {
-	return fmt.Sprintf("%slist=%s", HOST, strings.Join(w.config.Stocks, ","))
-}
-
-func fetch(url string) (string, error) {
+func fetch(code string) (string, error) {
+	url := strings.Join([]string{HOST, "list=", code}, "")
 	response, err := http.Get(url)
 
 	if err != nil {
@@ -169,58 +181,61 @@ func fetch(url string) (string, error) {
 }
 
 
-func format(str string) string {
-	piece := match(str)
+func format(w Watcher, str string) string {
+	piece, err := match(str)
+	if err != nil {
+		return err.Error()
+	}
+	fmt.Println(piece)
 	data := make(map[string]string)
-	substr := make([]string, len(piece))
-	for index, val := range piece {
-		stock := string(val[1])
-		p := strings.Split(stock, ",")
+	stockInfo := string(piece[2])
+	p := strings.Split(stockInfo, ",")
 
-		for index, _ := range stockField {
-			data[stockField[index]] = p[index]
-		}
-
-
-		substr[index] = fmt.Sprintf(
-			`## %s
-当前价：%s / 开盘价：%s / 最高价：%s / 最低价：%s
-卖一 %s：%s / 卖二 %s：%s / 卖三 %s：%s / 卖四 %s：%s / 卖五 %s：%s
-买一 %s：%s / 买二 %s：%s / 买三 %s：%s / 买四 %s：%s / 买五 %s：%s
-`,
-				data["name"], data["currentPrice"],
-				data["openingPrice"],
-				data["highestPrice"],
-				data["lowestPrice"],
-				data["sale1Price"],
-				data["sale1Quantity"],
-				data["sale2Price"],
-				data["sale2Quantity"],
-				data["sale3Price"],
-				data["sale3Quantity"],
-				data["sale4Price"],
-				data["sale4Quantity"],
-				data["sale5Price"],
-				data["sale5Quantity"],
-				data["buy1Price"],
-				data["buy1Quantity"],
-				data["buy2Price"],
-				data["buy2Quantity"],
-				data["buy3Price"],
-				data["buy3Quantity"],
-				data["buy4Price"],
-				data["buy4Quantity"],
-				data["buy5Price"],
-				data["buy5Quantity"])
+	for index, _ := range stockField {
+		data[stockField[index]] = p[index]
 	}
 
-	return strings.Join(substr, "\r\n\r\n")
+	code := string(piece[1])
+	stock, err := w.findStock(code)
+
+	if err != nil {
+		return err.Error()
+	}
+	price, err := strconv.ParseFloat(data["currentPrice"], 64)
+	if err != nil {
+		return err.Error()
+	}
+	if stock.Highest >= price {
+		// 达到最高目标价
+		return fmt.Sprintf("%s 达到最高目标价，现价 %s", data["name"], data["currentPrice"])
+
+	}
+	if stock.Lowest <= price {
+		// 达到最低目标价
+		return fmt.Sprintf("%s 达到最低目标价，现价 %s", data["name"], data["currentPrice"])
+	}
+
+	return ""
 }
 
 
-func match(str string) [][][]byte {
-	reg := regexp.MustCompile(`var\W\w+=\"(.+)\"`)
+func (w *Watcher) findStock(code string) (Stock, error) {
+
+	for _, val := range w.config.Stocks {
+		if val.Code == code {
+			return val, nil
+		}
+	}
+
+	return Stock{}, errors.New("code not find")
+}
+
+func match(str string) ([][]byte, error) {
+	reg := regexp.MustCompile(`var\W\w+[sz|sh](\d{6})=\"(.+)\"`)
 	rest := reg.FindAllSubmatch([]byte(str), -1)
 
-	return rest
+	if len(rest) == 0 {
+		return [][]byte{}, errors.New("匹配失败")
+	}
+	return rest[0], nil
 }
