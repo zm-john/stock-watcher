@@ -76,9 +76,9 @@ func (w *Watcher) Watch() {
 
         for _, stock := range w.config.Stocks {
             wg.Add(1)
-            go func(stock Stock) {
+            go func(st Stock) {
                 defer wg.Done()
-                rest, err := fetch(stock.Alias)
+                rest, err := fetch(st.Alias)
                 if err != nil {
                     w.notify(err.Error())
                 }
