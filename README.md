@@ -38,16 +38,18 @@
 }
 
 stocks：指定监控股票代码
-|---- code 股票代码
-|---- highest 最高目标价，如果为 0 则无忽略
-|____ lowest 最低目标价，如果为 0 则无忽略
+|———— code 股票代码
+|———— highest 最高目标价，如果为 0 则无忽略
+|———— lowest 最低目标价，如果为 0 则无忽略
+|____ remark 备注，自己看
+
 
 time：交易时间
-|---- start 开盘时间
+|———— start 开盘时间
 |____ end 收盘时间
 
 notification：通知
-|---- url 通知地址，我使用的 bearychat 会向这个地址 Post content-type:application/json 数据{"text": "股票数据", "channel": "指定股票接收频道"}
+|———— url 通知地址，我使用的 bearychat 会向这个地址 Post content-type:application/json 数据{"text": "股票数据", "channel": "指定股票接收频道"}
 |____ channel 频道
 
 interval：通知间隔时间，单位秒

@@ -1,14 +1,16 @@
 {
   "stocks": [
     {
-      "code": "600536",
-      "highest": 14.44,
-      "lowest": 14.39
+      "code": "000001",
+      "highest": 12.08,
+      "lowest": 11.99,
+      "remark": "平安银行"
     },
     {
-      "code": "000016",
-      "highest": 6.77,
-      "lowest": 6.75
+      "code": "000002",
+      "highest": 32.04,
+      "lowest": 31.99,
+      "remark": "万科A"
     }
   ],
   "time": {
