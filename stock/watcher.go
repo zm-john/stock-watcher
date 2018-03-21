@@ -204,12 +204,12 @@ func format(w Watcher, str string) string {
     if err != nil {
         return err.Error()
     }
-    if stock.Highest > 0 && stock.Highest >= price {
+    if stock.Highest > 0 && price >= stock.Highest  {
         // 达到最高目标价
         return fmt.Sprintf("%s 达到最高目标价，现价 %s", data["name"], data["currentPrice"])
 
     }
-    if stock.Lowest > 0 && stock.Lowest <= price {
+    if stock.Lowest > 0 && price <= stock.Lowest {
         // 达到最低目标价
         return fmt.Sprintf("%s 达到最低目标价，现价 %s", data["name"], data["currentPrice"])
     }
