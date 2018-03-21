@@ -4,11 +4,14 @@
 
 ## Todo
 * 股票异常波动（5分中 ± 2%）提醒
-* 后期更多功能....
+* 使用 Mysql
+* 使用 Web 添加关注股票
 
 ## Usage
 
-1. 配置 config.json 文件
+1. 复制配置文件 `cp config.json.example config.json`
+
+2. 修改 config.json 文件
 ```
 {
   "stocks": [
@@ -36,8 +39,8 @@
 
 stocks：指定监控股票代码
 |---- code 股票代码
-|---- highest 最高目标价
-|____ lowest 最低目标价
+|---- highest 最高目标价，如果为 0 则无忽略
+|____ lowest 最低目标价，如果为 0 则无忽略
 
 time：交易时间
 |---- start 开盘时间
